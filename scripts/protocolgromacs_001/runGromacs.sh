@@ -7,65 +7,28 @@
 
 #---------  FILE SETUP  -----------
 #PDB FILE, will be replace in the code later by $PDB
-FILE="" #<<<<<<<<<<<<<<<<<<<<<<<<< PUT THE PDB NAME HERE (without the extension)
+FILE="myprotein" #<<<<<<<<<<<<<<<<<<<<<<<<< PUT THE PDB NAME HERE (without the extension)
 # LIGAND NAME, if you have a ligand, it will be parametrize with acpype and the ligand name will be replace by "LIG".
 LIGNAME="" #<<<<<<<<<<<<<<<<<<<<<<  #PUT LIGAND NAME HERE, leave it blank if no ligand.
 
 #---------  SIMU SETUP  -----------
-BOXSIZE=1.5 #cubic simulation boxsiwe
+BOXSIZE=21.8 #cubic simulation boxsiwe
 BOXTYPE=cubic #Box type
-NT=20 #Number of core.
+NT=36 #Number of core.
 WATER=tip3p #Water type
-NUMBEROFREPLICAS=1 #Number of replica
-FF=amber99sb-ildn #Force field
-SIMULATIONTIME=500 #Simulation time in nanosec. Will be converted in fs and modified in the mdp file.
-
+NUMBEROFREPLICAS=3 #Number of replica
+FF=charmm36-jul2022 #Force field
+SIMULATIONTIME=3 #Simulation time in nanosec. Will be converted in fs and modified in the mdp file.
+NACL_CONC=0.15
 
 #---------  HPC SETUP  -----------
 MPI="" #If you have to submit jobs with MPI softwares like "mpirun -np 10". Add the command here
 GMX=gmx #GMX command (can be "$GMX_mpi" sometimes. Just change it here
 #THOSE COMMANDS 
-GPU0="-gpu_id 0 -ntmpi 4 -ntomp 2 -nb gpu -bonded gpu -npme 1 -pme gpu -pmefft gpu -pin on -pinstride 0 -nstlist 100 -pinoffset 49" 
-GPU1="-gpu_id 1 -ntmpi 4 -ntomp 2 -nb gpu -bonded gpu -npme 1 -pme gpu -pmefft gpu -pin on -pinstride 0 -nstlist 100 -pinoffset 0"
-export GMX_GPU_PME_PP_COMMS=true
-export GMX_FORCE_UPDATE_DEFAULT_GPU=1
-export GMX_GPU_DD_COMMS=true
+GPU0="-gpu_id 0 -ntmpi 1 -ntomp 20 -nb gpu -bonded gpu -pin on -pinstride 0 -nstlist 100 -pinoffset 49"
+GPU1="-gpu_id 1 -ntmpi 1 -ntomp 20 -nb gpu -bonded gpu -pin on -pinstride 0 -nstlist 100 -pinoffset 0"
 MDRUN_CPU="$GMX mdrun -nt $NT"
 MDRUN_GPU="$GMX mdrun $GPU0"
-
-
-	#Setup simulationtime
-if [ ! -z "$SIMULATIONTIME" ]
-then
-python_command=$(python <<EOF
-import re
-restep = re.compile("nsteps *= *(\d*)")
-redt = re.compile("dt *= *(\d*.\d*)")
-dt = 0
-simulationtime = float($SIMULATIONTIME) *1000 #Time in ps
-outputLines = []
-with open("mdp/md_prod.mdp",'r') as f:
-    mdp = f.readlines()
-    #find first the timestep
-    for line in mdp: 
-        dtmatch = redt.match(line)
-        if dtmatch:
-            dt = float(dtmatch.group(1))
-            break
-    for line in mdp:
-        stepmatch = restep.match(line)
-        if stepmatch and float(dt) > 0:
-            nsteps = int(simulationtime)/dt
-            line = "nsteps            = {}        ; {} * {} = {} ps or {} ns\n".format(int(nsteps),dt,nsteps, dt*nsteps, simulationtime/1000)
-        outputLines.append(line)
-    with open("mdp/md_prod.mdp",'w') as f:
-        for line in outputLines:
-            f.write(line)
-EOF
-)
-fi
-
-
 if [ ! -z "$LIGNAME" ]
 then
       #Create parameters directories
@@ -112,7 +75,7 @@ EOF
     cd receptor
 
     #Preparing topology
-    $GMX pdb2gmx -f receptor.pdb -o receptor_GMX.pdb -water $WATER -ignh -ff $FF
+    $GMX pdb2gmx -f receptor.pdb -o receptor_GMX.pdb -water $WATER -ignh -ff $FF 
 
     #Copy files from receptors/ligand folders.
     cd ../../
@@ -135,9 +98,7 @@ name 3 LIG-H
 q
 EOF
 )	
-    #echo "LIG-H" | $GMX genrestr -f param/ligand/ligand.acpype/ligand_NEW.pdb -o posre_ligand.itp -n lig_noh.ndx -fc 1000 1000 1000
-	#copying position restrained
-	cp param/ligand/ligand.acpype/posre_ligand.itp .
+    echo "LIG-H" | $GMX genrestr -f param/ligand/ligand.acpype/ligand_NEW.pdb -o posre_ligand.itp -n lig_noh.ndx -fc 1000 1000 1000
 	
 	#Include posre_ligand.itp AT THE END!!!!!!! of  ligand.itp
 	echo '
@@ -147,7 +108,7 @@ EOF
 #include "posre_ligand.itp"
 #endif'  >> ligand.itp
 
-    $GMX editconf -f  complex.pdb -o complex_newbox.gro -d $BOXSIZE -bt $BOXTYPE
+    $GMX editconf -f  complex.pdb -o complex_newbox.gro -box $BOXSIZE -bt $BOXTYPE
 	PDB=complex
 else
 
@@ -156,12 +117,13 @@ else
 	########################
 	##   TOPOLOGIE Creation
 	#######################
+	#echo 0 1 | $GMX pdb2gmx -f $PDB".pdb" -o $PDB"_processed.gro" -water $WATER -ignh -ff $FF -ter
 	$GMX pdb2gmx -f $PDB".pdb" -o $PDB"_processed.gro" -water $WATER -ignh -ff $FF
 	########################
 	##   Solvatation
 	#######################
 	#Default editconf, changer if you want...
-	$GMX editconf -f  $PDB"_processed.gro" -o $PDB"_newbox.gro" -d $BOXSIZE -bt $BOXTYPE
+	$GMX editconf -f  $PDB"_processed.gro" -o $PDB"_newbox.gro" -box $BOXSIZE -bt $BOXTYPE
 fi
 
 
@@ -174,46 +136,8 @@ $GMX solvate -cp $PDB"_newbox.gro" -cs spc216.gro -o $PDB"_solv.gro" -p topol.to
 #######################
 $GMX grompp -f mdp/ions.mdp -c $PDB"_solv.gro" -p topol.top -o ions.tpr --maxwarn 1
 
-echo "SOL" | $GMX genion -s ions.tpr -o $PDB"_solv_ions.gro" -p topol.top -pname NA -nname CL -neutral
+echo "SOL" | $GMX genion -s ions.tpr -o $PDB"_solv_ions.gro" -p topol.top -pname NA -nname CL  -conc $NACL_CON -neutral 
 
-#######################
-# MODIFYING FILES IF LIGAND IS DETECTED
-#######################
-if [ ! -z "$LIGNAME" ]
-then
-#1. Add constraints to the ligand
-    ndx=$($GMX make_ndx -f complex_solv_ions.gro -o index.ndx <<EOF
-1 | r LIG
-r SOL | r CL | r NA
-q
-EOF
-)
-
-#2. Rename protein+ligand group and Water+ions group
-$(python <<EOF
-import re
-with open('index.ndx', 'r') as file:
-    content = file.read()
-matches = re.findall(r'\[ \w+ \]', content)
-if matches:
-    content = content.replace(matches[-1], '[ Water_Ions ]')
-    content = content.replace(matches[-2], '[ Protein_Ligand ]')
-    with open('index.ndx', 'w') as file:
-        file.write(content)
-EOF
-)
-
-    #Now replace the groups in Equilibration and production mdp files
-    sed -i 's/Protein Non-Protein/Protein_Ligand Water_Ions/g' mdp/nvt_300.mdp
-    sed -i 's/Protein Non-Protein/Protein_Ligand Water_Ions/g' mdp/npt.mdp
-    sed -i 's/Protein Non-Protein/Protein_Ligand Water_Ions/g' mdp/md_prod.mdp
-
-
-    INDEX="-n index.ndx"
-else
-INDEX=""
-
-fi
 
  
 for ((i=0; i<$NUMBEROFREPLICAS; i++))
@@ -225,13 +149,12 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	cp ../$PDB"_solv_ions.gro" .
 	cp ../topol.top .
 	cp ../*.itp .
-    cp ../index.ndx . 2> /dev/null
 
 
 	#######################
 	## MINIMISATION
 	#######################
-	$GMX grompp -f mdp/em.mdp -c $PDB"_solv_ions.gro" -p topol.top -o em.tpr $INDEX
+	$GMX grompp -f mdp/em.mdp -c $PDB"_solv_ions.gro" -p topol.top -o em.tpr
 	$MPI $MDRUN_CPU -v -deffnm em 
 
 
@@ -252,7 +175,7 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	#######################
 	## temperature 300
 	#######################
-	$GMX grompp -f mdp/nvt_300.mdp -c results/mini/em.gro -r results/mini/em.gro  -p topol.top -o nvt_300.tpr -maxwarn 2 $INDEX
+	$GMX grompp -f mdp/nvt_300.mdp -c results/mini/em.gro -r results/mini/em.gro  -p topol.top -o nvt_300.tpr -maxwarn 2
 	$MPI $MDRUN_GPU -deffnm nvt_300 -v 
 	#temperature_graph
 
@@ -267,7 +190,7 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	#######################
 	## Pression
 	#######################
-	$GMX grompp -f mdp/npt.mdp -c results/nvt/nvt_300.gro -r results/nvt/nvt_300.gro -t results/nvt/nvt_300.cpt -p topol.top -o npt_ab.tpr -maxwarn 2 $INDEX
+	$GMX grompp -f mdp/npt.mdp -c results/nvt/nvt_300.gro -r results/nvt/nvt_300.gro -t results/nvt/nvt_300.cpt -p topol.top -o npt_ab.tpr -maxwarn 2
 	$MPI $MDRUN_GPU -deffnm npt_ab -v 
 
 	#cleaning
@@ -284,10 +207,39 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	## Production 
 	#######################
 	
-
+	#Setup simulationtime
+if [ ! -z "$SIMULATIONTIME" ]
+then
+python_command=$(python <<EOF
+import re
+restep = re.compile("nsteps *= *(\d*)")
+redt = re.compile("dt *= *(\d*.\d*)")
+dt = 0
+simulationtime = float($SIMULATIONTIME) *1000 #Time in ps
+outputLines = []
+with open("mdp/md_prod.mdp",'r') as f:
+    mdp = f.readlines()
+    #find first the timestep
+    for line in mdp: 
+        dtmatch = redt.match(line)
+        if dtmatch:
+            dt = float(dtmatch.group(1))
+            break
+    for line in mdp:
+        stepmatch = restep.match(line)
+        if stepmatch and float(dt) > 0:
+            nsteps = int(simulationtime)/dt
+            line = "nsteps            = {}        ; {} * {} = {} ps or {} ns\n".format(int(nsteps),dt,nsteps, dt*nsteps, simulationtime/1000)
+        outputLines.append(line)
+    with open("mdp/md_prod.mdp",'w') as f:
+        for line in outputLines:
+            f.write(line)
+EOF
+)          
+fi
 	
-	$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn 2 $INDEX
-	$MPI $MDRUN_GPU -deffnm "md_"$PDB"_prod"  -v
+	#$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn 2
+	#$MPI $MDRUN_GPU -deffnm "md_"$PDB"_prod"  -v
 
 	mkdir -p results/prod
 	mv md_* results/prod 2> /dev/null
