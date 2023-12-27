@@ -1,3 +1,10 @@
+## usage ##
+# 1.check pdb files and move them into ROOT/projects/structures
+# 2.cd to ROOT/projects, make sure this script is in ROOT/projects and zip_output.sh is in ROOT/projects/projects
+# 3.run this script
+## usage ##
+
+
 # check .pdb files in the projects/strucutres/ directory, then build new directories for each .pdb file in projects/projects directory
 # then copy scripts/protocolgromacs_001 to each new directory
 # then copy .pdb file to protocolgromacs_001 in each new directory, and rename it to myprotein.pdb after copying and saving the original file name as a backup.
@@ -42,3 +49,7 @@ for file in structures/*.pdb; do
     done
     cd $workdir
 done
+
+cd projects
+source zip_output.sh
+cd $workdir
