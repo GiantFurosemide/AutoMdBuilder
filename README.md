@@ -1,2 +1,2 @@
 # AutoMdBuilder
- a homemade scripts based on  https://github.com/tubiana/protocolGromacs
+ homemade scripts based on  https://github.com/tubiana/protocolGromacs
