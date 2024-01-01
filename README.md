@@ -19,8 +19,8 @@ The working directory is 'projects/'. The script 'runme.sh' will first check PDB
 
 1. Refine PDB files and copy them to 'projects/structures'.
 2. Update parameters for GROMACS in 'scripts/protocolgromacs_001':
-   a. 'scripts/protocolgromacs_001/runGromacs.sh'
-   b. 'scripts/protocolgromacs_001/mdp/*.mdp'
+   * *'scripts/protocolgromacs_001/runGromacs.sh'*
+   * 'scripts/protocolgromacs_001/mdp/*.mdp'
 3. Change the directory to 'projects/'.
 4. Run the script 'runme.sh'.
 
