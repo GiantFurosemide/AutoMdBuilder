@@ -26,6 +26,5 @@ The working directory is 'projects/'. The script 'runme.sh' will first check PDB
 
 ## 4. TODO
 
-* update automatically center atom selection, for example by centroid.
 * update supporting for multiple ligands
 * update logging
