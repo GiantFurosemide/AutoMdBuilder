@@ -1,5 +1,4 @@
 # AutoMdBuilder
-<<<<<<< HEAD
 
 Homemade scripts based on  [protocolGromacs](https://github.com/tubiana/protocolGromacs), for automatically md system building.
 
@@ -49,6 +48,13 @@ The working directory is 'projects/'. The script 'runme.sh' will first check PDB
 * update automatically center atom selection, for example by centroid.
 * update supporting for multiple ligands
 * update logging
-=======
- homemade scripts based on  https://github.com/tubiana/protocolGromacs
+  =======
+  homemade scripts based on  https://github.com/tubiana/protocolGromacs
+
 >>>>>>> 693a7cf7f91be3979df007efc2706eebf2e20997
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
