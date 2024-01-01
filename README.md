@@ -11,26 +11,7 @@ Please visit following links for more information about installation.
 
 ## 2. Directory Structure
 
-.
-├── LICENSE
-├── README.md
-├── projects
-│   ├── projects
-│   │   └── zip_output.sh # packup output files
-│   ├── runme.sh # main
-│   └── structures
-└── scripts
-    ├── protocolgromacs_001 # md building protocol
-    │   ├── LICENSE
-    │   ├── README.md
-    │   ├── mdp
-    │   │   ├── em.mdp
-    │   │   ├── ions.mdp
-    │   │   ├── md_prod.mdp
-    │   │   ├── npt.mdp
-    │   │   └── nvt_300.mdp
-    │   └── runGromacs.sh # update parameters here for gromacs
-    └── protocolgromacs_ori # origin version of md building protocol
+![directory_structure](imgs/directory_structure.png)
 
 ## 3. Usage
 
