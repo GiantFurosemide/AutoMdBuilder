@@ -1,6 +1,6 @@
 # AutoMdBuilder
 
-Homemade scripts based on  [protocolGromacs](https://github.com/tubiana/protocolGromacs), for automatically md system building.
+Homemade scripts based on  [protocolGromacs](https://github.com/tubiana/protocolGromacs), for automatic md system building.
 
 ## 1. Installation
 
