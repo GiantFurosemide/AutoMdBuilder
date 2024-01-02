@@ -47,7 +47,7 @@ ewald_rtol              = 1e-5          ; relative strength of Ewald-shifted pot
 tcoupl                  = Berendsen             ; modified Berendsen thermostat
 tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
 tau_t                   = 0.1     0.1           ; time constant, in ps
-ref_t                   = 300     300           ; reference temperature, one for each group, in K
+ref_t                   = 303.15     303.15           ; reference temperature, one for each group, in K
 
 ; 7.3.15 Pressure Coupling
 pcoupl                  = Berendsen			    ; pressure coupling where box vectors are variable
