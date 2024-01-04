@@ -3,7 +3,7 @@
 #Version: 1.3.0
 
 #activate acpype environment
-#conda activate acpype
+conda activate acpype
 
 #---------  FILE SETUP  -----------
 #PDB FILE, will be replace in the code later by $PDB
@@ -308,3 +308,4 @@ ls
 
 	cd ../
 done
+conda deactivate
