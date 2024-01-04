@@ -61,13 +61,14 @@ EOF
 
 
     #Convert in mol2 while adding hydrogens.
-    obabel -ipdb ligand.pdb -omol2 -h > ligand.mol2
+    #obabel -ipdb ligand.pdb -omol2 -h > ligand.mol2
+	obabel -ipdb ligand.pdb -h -osdf  -Oligand.sdf
 
     #use ACPYPE to create the ligand topology.
     #DISCLAMER! This is a "quick and dirty method", it has to be optimised with ACPYPE parameters of course and adapted to ligands
     #if you see strange MD behaviours.
     # You may also consider Automated Topology Builder (ATB) (webserver) Or LibParGen (webserver & standalone tools)
-    acpype -i ligand.mol2
+    acpype -i ligand.sdf
     mkdir ligand
     mv ligand* ligand/
     mkdir receptor
