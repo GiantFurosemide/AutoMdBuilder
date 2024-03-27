@@ -4,8 +4,6 @@
 # 2.cd to ROOT/projects, make sure this script is in ROOT/projects 
 # 3.run this script
 ## usage ##
-
-
 # check .pdb files in the projects/strucutres/ directory, then build new directories for each .pdb file in projects/projects directory
 # then copy scripts/protocolgromacs_001 to each new directory
 # then copy .pdb file to protocolgromacs_001 in each new directory, and rename it to myprotein.pdb after copying and saving the original file name as a backup.
