@@ -17,14 +17,30 @@ Please visit following links for more information about installation.
 
 The working directory is 'projects/'. The script 'runme.sh' will first check PDB files in 'projects/structures', then create new directories under 'projects/projects' for each structure, and perform MD system building, minimization, NVT equilibration, NPT equilibration, and so on, as set up in 'scripts/protocolgromacs_001'.
 
+### for single protein or single protein + single ligand
+
 1. Refine PDB files and copy them to 'projects/structures'.
 2. Update parameters for GROMACS in 'scripts/protocolgromacs_001':
+
    * *'scripts/protocolgromacs_001/runGromacs.sh'*
    * 'scripts/protocolgromacs_001/mdp/*.mdp'
 3. Change the directory to 'projects/'.
-4. Run the script 'runme.sh'.
+4. Run the script 'runme_single_protein_single_ligand.sh'.
+
+### for single protien + multiple ligands
+
+
+1. Refine PDB files and copy them to 'projects/structures'.
+2. Update parameters for GROMACS in 'scripts/protocolgromacs_001':
+
+* 'scripts/protocolgromacs_001/runGromacs.sh'
+* 'scripts/protocolgromacs_001/mdp/*.mdp'
+
+3. Change the directory to 'projects/'.
+4. Run the script 'runme_single_protein_multiple_ligands.sh'.
 
 ## 4. TODO
 
 * update supporting for multiple ligands
 * update logging
+ 

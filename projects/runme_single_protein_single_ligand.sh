@@ -9,7 +9,7 @@
 # then copy scripts/protocolgromacs_001 to each new directory
 # then copy .pdb file to protocolgromacs_001 in each new directory, and rename it to myprotein.pdb after copying and saving the original file name as a backup.
 workdir=$(pwd)
-protocolgromacs_RUN=protocolgromacs_001 # the name of the script to run. in $ROOT/scripts
+protocolgromacs_RUN=protocolgromacs_single_ligand # the name of the script to run. in $ROOT/scripts
 log_file=${workdir}/runme.log
 
 # check if the log file exists, if not, create it
