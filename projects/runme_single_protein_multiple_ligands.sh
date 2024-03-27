@@ -26,32 +26,13 @@ for data_dir in structures/*; do
     cp -rv ../scripts/$protocolgromacs_RUN projects/$data_dir_name
     # complex.pdb ligand_GMX.tip ligand_NEW.pdb
     cp -rv $data_dir/* projects/$data_dir_name/$protocolgromacs_RUN/
-    for pdb_file in $data_dir/*.pdb;
+    for pdb_file in $(ls $data_dir/*.pdb| grep -v "_NEW.pdb$"); # only select complex.pdb 
     do
         cp -v $pdb_file projects/$data_dir_name/$protocolgromacs_RUN/myprotein.pdb
     done;
 done;
 
-# then run the protocolgromacs_001 script runGromacs.sh in each new directory
-cd $workdir # AutoMDbuilder/projects/
-for file in structures/*.pdb; do
-    filename=$(basename $file)
-    filename="${filename%.*}"
-    cd projects/$filename/$protocolgromacs_RUN
-    source ./runGromacs.sh
 
-    # copy the results gro to eqout directory
-    for dir in replica*; do
-        gmx grompp -c $dir/results/npt/npt_ab.gro -f mdp/md_prod.mdp -p topol.top -pp processed.top
-        mkdir -p ${PWD}_eqout_${dir}
-        cp -rv $dir/results/npt/npt_ab.gro ${PWD}_eqout_${dir} && cp -rv processed.top ${PWD}_eqout_${dir} 
-    done
-    # copy the processed.top to the eqout directory
-    for dir in replica*; do
-        cp -rv processed.top ${PWD}_eqout_${dir} 
-    done
-    cd $workdir # AutoMDbuilder/projects/
-done
 
 cd $workdir # AutoMDbuilder/projects/
 for data_dir in structures/*; do
