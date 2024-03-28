@@ -14,9 +14,10 @@ log_file=${workdir}/runme.log
 
 # check if the log file exists, if not, create it
 
-if [ ! -f $log_file ]; then
-    touch $log_file
+if [ -f $log_file ]; then
+    cp -v $log_file ${log_file}.bak
 fi
+echo "$(date)> start!" > $log_file
 
 # initialize the projects directory
 cd $workdir
@@ -26,6 +27,7 @@ for file in structures/*.pdb; do
     mkdir -p projects/$filename
     cp -rv ../scripts/$protocolgromacs_RUN projects/$filename
     cp -rv structures/$filename.pdb projects/$filename/$protocolgromacs_RUN/myprotein.pdb
+    echo "$(date)> cp -rv structures/$filename.pdb projects/$filename/$protocolgromacs_RUN/myprotein.pdb" >> $log_file
     cp -rv structures/$filename.pdb projects/$filename/$protocolgromacs_RUN/$filename.pdb
 done
 
@@ -35,13 +37,16 @@ for file in structures/*.pdb; do
     filename=$(basename $file)
     filename="${filename%.*}"
     cd projects/$filename/$protocolgromacs_RUN
+    echo "$(date)> cd projects/$filename/$protocolgromacs_RUN" >> $log_file
     source ./runGromacs.sh
 
     # copy the results gro to eqout directory
     for dir in replica*; do
         gmx grompp -c $dir/results/npt/npt_ab.gro -f mdp/md_prod.mdp -p topol.top -pp processed.top
         mkdir -p ${PWD}_eqout_${dir}
-        cp -rv $dir/results/npt/npt_ab.gro ${PWD}_eqout_${dir} && cp -rv processed.top ${PWD}_eqout_${dir} 
+        cp -rv $dir/results/npt/npt_ab.gro ${PWD}_eqout_${dir} 
+        cp -rv processed.top ${PWD}_eqout_${dir}/processed.itp
+        echo -e "$(date)> cp -rv $dir/results/npt/npt_ab.gro ${PWD}_eqout_${dir} \n cp -rv processed.top ${PWD}_eqout_${dir}/processed.itp" >> $log_file
     done
     # copy the processed.top to the eqout directory
     for dir in replica*; do

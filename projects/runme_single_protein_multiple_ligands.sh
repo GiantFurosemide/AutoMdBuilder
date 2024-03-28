@@ -40,8 +40,8 @@ done;
 cd $workdir # AutoMDbuilder/projects/
 for data_dir in structures/*; do
     data_dir_name=$(basename $data_dir)
-    cd projects/$data_dir_name/$protocolgromacs_RUN
-    echo "$(date)> cd projects/$data_dir_name/$protocolgromacs_RUN" >> $log_file
+    cd $workdir/projects/$data_dir_name/$protocolgromacs_RUN
+    echo "$(date)> cd $workdir/projects/$data_dir_name/$protocolgromacs_RUN" >> $log_file
     cp -rv $workdir/../scripts/multi-ligands/packup.sh .  # will be used in mdbuild_add_multi_ligands.sh
     python ligand_info_prepare.py
     echo "$(date)> python ligand_info_prepare.py" >> $log_file
