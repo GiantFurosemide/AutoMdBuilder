@@ -171,6 +171,12 @@ do
 	update_ligand_info $bash_script;
 	prepare_complex_pdb;
 done;
+
+# extract [ atomtypes ] block from *_GMX.itp and merge to atomtypes_merge.itp 
+python ligand_itp_process.py # update *_GMX.itp; generate atomtypes_merge.itp 
+cat topol.top | sed "/forcefield\.itp\"/a\
+  #include \"atomtypes_merge.itp\"" > topol2.top
+mv topol2.top topol.top
 ######################
 ## set box size; add water
 ###################### 
