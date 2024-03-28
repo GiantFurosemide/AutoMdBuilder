@@ -43,6 +43,7 @@ for data_dir in structures/*; do
     cd $workdir/projects/$data_dir_name/$protocolgromacs_RUN
     echo "$(date)> cd $workdir/projects/$data_dir_name/$protocolgromacs_RUN" >> $log_file
     cp -rv $workdir/../scripts/multi-ligands/packup.sh .  # will be used in mdbuild_add_multi_ligands.sh
+    cp -rv $workdir/../scripts/multi-ligands/ligand_itp_process.py .  # will be used in mdbuild_add_multi_ligands.sh
     python ligand_info_prepare.py
     echo "$(date)> python ligand_info_prepare.py" >> $log_file
     source mdbuild_add_multi_ligands.sh
