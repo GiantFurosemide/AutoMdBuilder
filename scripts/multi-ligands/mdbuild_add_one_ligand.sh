@@ -191,8 +191,9 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	mv mdout.mdp results/mini/
 	mv *.gro gro/
 	#potential energy graph
-	echo "11 0" | $GMX energy -f results/mini/em.edr -o graph/mini_"$PDB"_pot.xvg
-
+	$GMX energy -f results/mini/em.edr -o graph/mini_"$PDB"_pot.xvg << INPUT
+Potential
+INPUT
 	#######################
 	## temperature (300K by default)
 	#######################
@@ -206,8 +207,9 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	mv mdout.mdp results/nvt/
 
 	#Temparture graph
-	echo "16 0" | $GMX energy -f results/nvt/nvt_300.edr -o graph/temperature_nvt_300.xvg
-
+	$GMX energy -f results/nvt/nvt_300.edr -o graph/temperature_nvt_300.xvg << INPUT
+Temperature
+INPUT
 	#######################
 	## Pression
 	#######################
@@ -219,9 +221,15 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	mv npt* results/npt/ 2> /dev/null
 	mv mdout.mdp results/npt_ab/
 	#Pression and density graph
-	echo "17 0" | $GMX energy -f results/npt/npt_ab.edr -o graph/npt_"$PDB"_pressure.xvg
-	echo "22 0" | $GMX energy -f results/npt/npt_ab.edr -o graph/npt_"$PDB"_volume.xvg
-
+	$GMX energy -f results/npt/npt_ab.edr -o graph/npt_"$PDB"_pressure.xvg << INPUT
+Pressure
+INPUT
+	$GMX energy -f results/npt/npt_ab.edr -o graph/npt_"$PDB"_volume.xvg << INPUT
+Volume
+INPUT
+	$GMX energy -f results/npt/npt_ab.edr -o graph/npt_"$PDB"_potential.xvg << INPUT
+Potential
+INPUT
 	#######################
 	## Production 
 	#######################
