@@ -48,10 +48,6 @@ for file in structures/*.pdb; do
         cp -rv processed.top ${PWD}_eqout_${dir}/processed.itp
         echo -e "$(date)> cp -rv $dir/results/npt/npt_ab.gro ${PWD}_eqout_${dir} \n cp -rv processed.top ${PWD}_eqout_${dir}/processed.itp" >> $log_file
     done
-    # copy the processed.top to the eqout directory
-    for dir in replica*; do
-        cp -rv processed.top ${PWD}_eqout_${dir} 
-    done
     cd $workdir
 done
 
