@@ -248,8 +248,8 @@ EOF
 )          
 fi
 	
-	#$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn 2
-	#$MPI $MDRUN_GPU -deffnm "md_"$PDB"_prod"  -v
+	$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn 2
+	$MPI $MDRUN_GPU -deffnm "md_"$PDB"_prod"  -v
 
 	mkdir -p results/prod
 	mv md_* results/prod 2> /dev/null
