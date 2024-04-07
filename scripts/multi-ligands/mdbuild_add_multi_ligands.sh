@@ -46,7 +46,7 @@ GPU0="-gpu_id 0 -ntmpi 1 -ntomp 20 -nb gpu -bonded gpu -pin on -pinstride 0 -nst
 GPU1="-gpu_id 1 -ntmpi 1 -ntomp 20 -nb gpu -bonded gpu -pin on -pinstride 0 -nstlist 100 -pinoffset 0"
 MDRUN_CPU="$GMX mdrun -nt $NT"
 MDRUN_GPU="$GMX mdrun $GPU1"
-
+NR_MAX_WARN=20
 
 
 #-------- STSTEM BUILDING --------
@@ -187,7 +187,7 @@ $GMX solvate -cp $PDB"_newbox.gro" -cs spc216.gro -o "${PDB}_solv.gro" -p topol.
 #######################
 ## ADDING IONS
 #######################
-$GMX grompp -f mdp/ions.mdp -c $PDB"_solv.gro" -p topol.top -o ions.tpr --maxwarn 1
+$GMX grompp -f mdp/ions.mdp -c $PDB"_solv.gro" -p topol.top -o ions.tpr -maxwarn $NR_MAX_WARN
 echo "SOL" | $GMX genion -s ions.tpr -o $PDB"_solv_ions.gro" -p topol.top -pname NA -nname CL  -conc $NACL_CONC -neutral 
 
 
@@ -209,7 +209,7 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	#######################
 	## MINIMISATION
 	#######################
-	$GMX grompp -f mdp/em.mdp -c $PDB"_solv_ions.gro" -p topol.top -o em.tpr
+	$GMX grompp -f mdp/em.mdp -c $PDB"_solv_ions.gro" -p topol.top -o em.tpr -maxwarn $NR_MAX_WARN
 	$MPI $MDRUN_CPU -v -deffnm em 
 
 
@@ -228,7 +228,7 @@ INPUT
 	#######################
 	## temperature (300K by default)
 	#######################
-	$GMX grompp -f mdp/nvt_300.mdp -c results/mini/em.gro -r results/mini/em.gro  -p topol.top -o nvt_300.tpr -maxwarn 2
+	$GMX grompp -f mdp/nvt_300.mdp -c results/mini/em.gro -r results/mini/em.gro  -p topol.top -o nvt_300.tpr -maxwarn $NR_MAX_WARN
 	$MPI $MDRUN_GPU -deffnm nvt_300 -v 
 	#temperature_graph
 
@@ -245,7 +245,7 @@ INPUT
 	#######################
 	## Pression
 	#######################
-	$GMX grompp -f mdp/npt.mdp -c results/nvt/nvt_300.gro -r results/nvt/nvt_300.gro -t results/nvt/nvt_300.cpt -p topol.top -o npt_ab.tpr -maxwarn 2
+	$GMX grompp -f mdp/npt.mdp -c results/nvt/nvt_300.gro -r results/nvt/nvt_300.gro -t results/nvt/nvt_300.cpt -p topol.top -o npt_ab.tpr -maxwarn $NR_MAX_WARN
 	$MPI $MDRUN_GPU -deffnm npt_ab -v 
 
 	#cleaning
@@ -297,7 +297,7 @@ with open("mdp/md_prod.mdp",'r') as f:
 EOF
 )          
 
-	$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn 2
+	$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn $NR_MAX_WARN
 	$MPI $MDRUN_GPU -deffnm "md_"$PDB"_prod"  -v
 
 	mkdir -p results/prod
