@@ -29,6 +29,6 @@ acpype -i ${output_name}.mol2
 file_in_sdf="input.sdf"
 output_name="GA"
 output_3letter_code="GAC"
-acedrg -i $file_in_sdf -o $output_name -r $output_3letter_code
+acedrg -s $file_in_sdf -o $output_name -r $output_3letter_code
 obabel -ipdb ${output_name}.pdb -omol2  > ${output_name}.mol2
 acpype -i ${output_name}.mol2
