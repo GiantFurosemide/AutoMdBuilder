@@ -47,7 +47,11 @@ GPU1="-gpu_id 1 -ntmpi 1 -ntomp 20 -nb gpu -bonded gpu -pin on -pinstride 0 -nst
 MDRUN_CPU="$GMX mdrun -nt $NT"
 MDRUN_GPU="$GMX mdrun $GPU1"
 NR_MAX_WARN=20
-
+#-------- clean -----------
+rm -rfv param
+rm -rfv complex.pdb
+rm -rfv topol.top
+rm -rfv replica_1
 
 #-------- STSTEM BUILDING --------
 

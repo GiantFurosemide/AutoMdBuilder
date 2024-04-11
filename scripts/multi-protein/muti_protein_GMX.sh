@@ -19,5 +19,5 @@ echo chain_B | gmx editconf -f $ORI_PDB -n index.ndx -o chain_B.pdb -label B
 #echo ligands_GX1 | gmx editconf -f $ORI_PDB -n index.ndx -o chain_Z.pdb -label Z
 
 
-cat chain_*.pdb | grep ATOM > combined.pdb
-gmx pdb2gmx -f combined.pdb -o combined.gro -ignh -p  topol.top
+cat chain_*.pdb | grep ATOM > receptor.pdb
+gmx pdb2gmx -f receptor.pdb -o receptor_GMX.gro -ignh -p  topol.top
