@@ -1,0 +1,16 @@
+# 载入力场
+source leaprc.protein.ff14SB  # 载入蛋白质的力场
+source leaprc.gaff            # 载入GAFF力场，用于处理小分子
+source leaprc.water.tip3p     # 载入TIP3P水模型
+source leaprc.lipid21         # 载入Lipid21力场，用于处理磷脂
+
+# 载入pdb文件
+system = loadpdb bilayer_myprotein.pdb
+
+# 检查并平衡电荷
+check system
+charge system
+
+# 保存拓扑文件和坐标文件
+saveamberparm system bilayer_myprotein.prmtop bilayer_myprotein.inpcrd
+quit

@@ -1,0 +1,26 @@
+source leaprc.protein.ff14SB  # 载入蛋白质的力场
+source leaprc.gaff            # 载入GAFF力场，用于处理小分子
+source leaprc.water.tip3p     # 载入TIP3P水模型
+source leaprc.lipid14         # 载入Lipid14力场，用于处理磷脂
+
+# 载入蛋白质
+protein = loadpdb proA.pdb
+
+# 载入小分子
+ligand = loadpdb LIG.pdb
+
+# 载入磷脂层、水和离子
+membrane = loadpdb POPC.pdb
+water = loadpdb water.pdb
+ions = loadpdb ions.pdb
+
+# 将所有组分组合在一起
+complex = combine {protein ligand membrane water ions}
+
+# 检查并平衡电荷
+check complex
+charge complex
+
+# 保存拓扑文件和坐标文件
+saveamberparm complex complex.prmtop complex.inpcrd
+quit
