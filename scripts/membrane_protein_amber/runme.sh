@@ -35,6 +35,8 @@ packmol < packmol.inp
 
 # prepare pdb for tleap (delete H)
 pdb4amber -i $packmol_out -o $pdb4amber_out --nohyd
+sed -i "s/TIP/WAT/g" ${pdb4amber_out}
+
 
 # add force field 
 
