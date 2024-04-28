@@ -45,7 +45,7 @@ def int_to_3letter_code(num):
     if num >= 46656:
         raise ValueError("num should be less than 46656 (36*36*36)")
     letters = string.ascii_uppercase + string.digits
-    return letters[num // 46656] + letters[(num // 46656) % 46656] + letters[num % 46656]
+    return letters[num // (36*36)] + letters[(num // 36) % 36] + letters[num % 36]
 
 # read a csv file with columns(no header): ID, smile_string. convert the index of each row to a 3-letter code. 
 # save the 3-letter code to a new column'out_name' and a new column'3letter_code'. and save as a new csv file.
