@@ -1,4 +1,7 @@
-
+"""
+A script to convert a csv file with columns: ID, smile_string to a csv file with columns: ID, smile_string, out_name, 3letter_code.
+Then generate pdb and ligand.acpype for each row in the csv file.
+"""
 
 
 # write a function to write log conveniently by inputting a string
@@ -48,13 +51,16 @@ def int_to_3letter_code(num):
 # save the 3-letter code to a new column'out_name' and a new column'3letter_code'. and save as a new csv file.
 def add_3letter_code(csv_in, csv_out="output.csv"):
     import pandas as pd
-    df = pd.read_csv(csv_in, header=None, names=[ 'ID','smile_string'])
+    #df = pd.read_csv(csv_in, header=None, names=[ 'ID','smile_string'])
+    df = pd.read_csv(csv_in)
     df['out_name'] = df.index.map(int_to_3letter_code)
     df['3letter_code'] = df['out_name'].map(lambda x: x.upper())
     df['acpype_dir_out'] = df['out_name'].map(lambda x: x+".acpype")
     df['acedrg_tmp_out'] = df['out_name'].map(lambda x: x+"_TMP")
-    df['acpype_cif_out'] = df['out_name'].map(lambda x: x+".cif")
-    df['acpype_pdb_out'] = df['out_name'].map(lambda x: x+".pdb")
+    df['acedrg_cif_out'] = df['out_name'].map(lambda x: x+".cif")
+    df['acedrg_pdb_out'] = df['out_name'].map(lambda x: x+".pdb")
+    df['acpype_gmx_itp_out'] = df['out_name'].map(lambda x: x+"_GMX.itp")
+    df['acpype_gmx_newpdb_out'] = df['out_name'].map(lambda x: x+"_NEW.pdb")
     write_log(f"add 3-letter code to {csv_in} and save to {csv_out}")
     df.to_csv(csv_out, index=False)
 
@@ -62,9 +68,9 @@ if __name__ == "__main__":
     
     # input.csv has columns: ID, smile_string
     # ouput.csv has columns: ID, smile_string, out_name, 3letter_code
-    add_3letter_code("test_acpype.csv", "output.csv") 
+    add_3letter_code("input.csv", "output.csv") 
 
-    # generate pdb and ligand.acpype
+    # generate pdb and ligand.a cpype
     acpype_from_smile_csv("output.csv")
     print(f"\n> check output.csv and {__file__.replace('.py','')}.log for details.")
 
