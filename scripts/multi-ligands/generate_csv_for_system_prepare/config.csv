@@ -1,0 +1,3 @@
+ligand_pdb,input_pdb,output_pdb,num_A_proteins,box_size,THRESHOLD1,THRESHOLD2,segid
+/media/muwang/新加卷/muwang/work/md_build/projects/ZYK/structure/complex/GA_NEW.pdb,/media/muwang/新加卷/muwang/work/md_build/projects/ZYK/structure/complex/3D4N_mutated_maestro_coot-29-282.pdb,/media/muwang/新加卷/muwang/work/md_build/projects/ZYK/structure/complex/output/3D4N_mutated_maestro_coot-29-282-GA6-10w.pdb,6,100,5.5,5.5,AAA
+/media/muwang/新加卷/muwang/work/md_build/projects/ZYK/structure/complex/TP_NEW.pdb,/media/muwang/新加卷/muwang/work/md_build/projects/ZYK/structure/complex/output/3D4N_mutated_maestro_coot-29-282-GA6-10w.pdb,/media/muwang/新加卷/muwang/work/md_build/projects/ZYK/structure/complex/output/3D4N_mutated_maestro_coot-29-282-GA6-TP6-10w.pdb,6,100,5.5,5.5,AAB
