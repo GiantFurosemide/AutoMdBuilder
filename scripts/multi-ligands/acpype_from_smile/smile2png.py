@@ -1,6 +1,10 @@
 """
+conda env of rdkit is required
 
+draw ligand png files based on smile string 
 
+input: csv with columns 'out_name', 'smile_string', 'mass' and 'logP'
+output: png files with the name of 'out_name' for each ligands
 """
 
 

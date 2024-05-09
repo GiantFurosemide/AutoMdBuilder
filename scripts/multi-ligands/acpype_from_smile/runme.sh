@@ -37,4 +37,15 @@ mv ./???.png      png_file/
 mv ./???.cif      cif_file/
 mv ./.acpype_tmp* acpype_file/
 
+# extract ligands top and pdb for md system building 
+cp checkdone_ONLYdone.csv acpype_file
+cp extract_ligands_top.py acpype_file
+cd acpype_file
+FOR_MD_SYS='for_md_system'
+python extract_ligands_top.py -f checkdone_ONLYdone.csv -o $FOR_MD_SYS
+mv $FOR_MD_SYS ../
+rm -r extract_ligands_top.py
+cd -
+
+
 # if chechdone_ONLYnot_done is not empty, change file name to input.csv and run from start

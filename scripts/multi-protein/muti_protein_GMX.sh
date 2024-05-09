@@ -1,4 +1,4 @@
-
+# do not use this script, just chang chain ID in pdb is ok
 
 ORI_PDB="complex.pdb"
 
