@@ -9,7 +9,7 @@ conda deactivate
 # caluculate mass and logP, then visualize mass and logP
 # read output.csv and write ligand_info.csv
 conda activate my-rdkit-env
-python smile2mass_log.py
+python smile2mass_logP.py
 
 # check if topology file and pdb file are generated correctly
 # read ligand_info.csv and write 3 checkdone_*.csv
