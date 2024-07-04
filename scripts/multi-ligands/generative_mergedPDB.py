@@ -201,8 +201,8 @@ def generate_merge(config_dict):
         # alpha, beta, gamma: alpha,gamma: 0-2pi; beta: 0-pi
         eular_angles = np.hstack(
             [np.random.rand(1) * 2 * np.pi, np.random.rand(1) * np.pi, np.random.rand(1) * 2 * np.pi])
-        C_positions[i * num_A_atoms: (i + 1) * num_A_atoms, :] = rotate_atoms(
-            A_structure.atoms.positions + position, eular_angles)
+        #C_positions[i * num_A_atoms: (i + 1) * num_A_atoms, :] = rotate_atoms(A_structure.atoms.positions + position, eular_angles)
+        C_positions[i * num_A_atoms: (i + 1) * num_A_atoms, :] = A_structure.atoms.positions + position
 
     # Assign positions for B structure (protein)
     C_positions[num_A_atoms * num_A_proteins:] = B_centered_coords
