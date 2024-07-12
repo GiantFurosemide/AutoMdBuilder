@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# 1M is 6.02214076 个/ 1e4 A^3
+
+import argparse
+
+def cal_concentration2number(bs,c):
+    """
+    Calculate the number of ligands in a box given the box size(in Angstrom) and concentration(in μM).
+    1M is 6.02214076 个/ 1e4 A^3
+    Args:
+    bs (float): The size of the box in Angstrom.
+    c (float): The concentration of the ligand in μM. 
+    """
+    return (c/1e6)/1e4*(bs**3)*6.02214076
+
+# add argparse for box_size and concentration 
+def add_parser():
+    parser = argparse.ArgumentParser(description="Calculate the number of ligands in a box given the box size(in Angstrom) and concentration(in μM).")
+    parser.add_argument('-bs','--box_size', type=float, help='The size of the box in Angstrom',required=True)
+    parser.add_argument('-c','--concentration', type=float, help='The concentration of the ligand in μM',required=True)
+    args = parser.parse_args()
+    return args
+
+# add usage of argparse
+def main():
+    args = add_parser()
+    number_of_ligand = cal_concentration2number(args.box_size, args.concentration)
+    print(number_of_ligand)
+
+if __name__ == '__main__':
+    # input
+    #box_size = 218 # Angstrom
+    #concentration = 150e3 # μM
+    # output
+    #number_of_ligand = cal_concentration2number(box_size,concentration)
+    #print(number_of_ligand)
+    main()
+
