@@ -1,0 +1,16 @@
+Remark line goes here
+MASS
+
+BOND
+
+ANGLE
+p5-c3-sh   41.550     109.740   same as p5-c3-ss, penalty score=  1.5
+
+DIHE
+
+IMPROPER
+
+NONBON
+
+
+

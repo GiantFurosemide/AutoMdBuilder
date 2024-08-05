@@ -1,0 +1,34 @@
+Remark line goes here
+MASS
+
+BOND
+cx-ny  227.20   1.505       same as cx-n4, penalty score=  0.0
+
+ANGLE
+c3-ny-cx   62.600     117.290   same as c3-n4-cx, penalty score=  0.0
+cx-cx-ny   80.400     118.730   same as cx-cx-n4, penalty score=  0.0
+hx-cx-ny   59.700     110.220   same as hx-cx-n4, penalty score=  0.0
+cx-ny-hn   46.100     111.430   same as cx-n4-hn, penalty score=  0.0
+
+DIHE
+c3-c3-c3-ny   1    0.210         0.000           3.000      same as c3-c3-c3-n4, penalty score=  0.0
+c3-c3-ny-cx   9    1.400         0.000           3.000      same as X -c3-n4-X , penalty score=  0.0
+c3-c3-ny-hn   9    1.400         0.000           3.000      same as X -c3-n4-X , penalty score=  0.0
+ny-c3-c3-oh   1    0.144         0.000          -3.000      same as n4-c3-c3-oh
+ny-c3-c3-oh   1    1.300         0.000           2.000      same as n4-c3-c3-oh, penalty score=  0.0
+cx-cx-ny-c3   1    0.156         0.000           3.000      same as c3-c3-n4-c3, penalty score=179.0
+hx-cx-ny-c3   9    1.400         0.000           3.000      same as X -c3-n4-X , penalty score= 92.0
+hx-c3-ny-cx   9    1.400         0.000           3.000      same as X -c3-n4-X , penalty score=  0.0
+hx-c3-ny-hn   1    0.109         0.000           3.000      same as hx-c3-n4-hn, penalty score=  0.0
+cx-cx-ny-hn   9    1.400         0.000           3.000      same as X -c3-n4-X , penalty score= 92.0
+hx-cx-ny-hn   1    0.109         0.000           3.000      same as hx-c3-n4-hn, penalty score= 92.0
+
+IMPROPER
+ca-ca-ca-os         1.1          180.0         2.0          Using the default value
+ca-ca-ca-ha         1.1          180.0         2.0          Using general improper torsional angle  X- X-ca-ha, penalty score=  6.0)
+ca-ca-ca-ca         1.1          180.0         2.0          Using the default value
+
+NONBON
+
+
+

@@ -1,0 +1,12 @@
+REMARK 1ew8_ligand_NEW.pdb created by acpype (v: 2023.10.27) on Fri Aug  2 17:18:49 2024
+ATOM      1    P PAE Z   1      74.008  39.208  42.700  1.00  0.00           P
+ATOM      2  O1P PAE Z   1      74.596  40.581  43.035  1.00  0.00           O
+ATOM      3  O2P PAE Z   1      72.771  39.064  43.580  1.00  0.00           O
+ATOM      4  O3P PAE Z   1      73.685  39.114  41.276  1.00  0.00           O
+ATOM      5  C1P PAE Z   1      75.208  37.927  43.238  1.00  0.00           C
+ATOM      6   C1 PAE Z   1      74.834  37.700  44.735  1.00  0.00           C
+ATOM      7   O1 PAE Z   1      74.109  38.624  45.183  1.00  0.00           O
+ATOM      8   O2 PAE Z   1      74.969  36.580  45.208  1.00  0.00           O
+ATOM      9   H1 PAE Z   1      76.242  38.288  43.140  1.00  0.00           H
+ATOM     10   H2 PAE Z   1      75.086  37.002  42.656  1.00  0.00           H
+END
