@@ -1,5 +1,5 @@
 
-# Requirment
+# Requirement
 
 * ambertools23
 * acpype
