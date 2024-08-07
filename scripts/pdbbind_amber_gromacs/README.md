@@ -37,12 +37,14 @@
   * runme.sh will copy mdbuild.bak/scripts/* to mdbuild.bak/projects/PDB_complexR1_XXXX_10w
   * runme.sh will run amber_build_system.py for md sytem building
   * runme.sh will run mdbuild_add_multi_ligands.sh for minimization/equilibration/production and output files wraping
-    * output files( .gro and .itp) will be stored in for examplemdbuild.bak/projects/PDB_complexR1_XXXX_10w_eqout_replica_*
+    * output files( .gro and .itp) will be stored in for example mdbuild.bak/projects/PDB_complexR1_XXXX_10w_eqout_replica_*
 * step4 update md system size
   * by defaut, every case was named as "10w", a md system with about 10,000 atoms, before its md system built.
   * cd mdbuild.bak/, run "python update_size_file_name.py"
   * update_size_file_name.py will check atoms number of .gro file, and update cases directory name
-    * for example: mdbuild.bak/projects/PDB_complexR1_XXXX_10w -> mdbuild.bak/projects/PDB_complexR1_XXXX_50w
+    * for example:
+      * mdbuild.bak/projects/PDB_complexR1_XXXX_10w -> mdbuild.bak/projects/PDB_complexR1_XXXX_50w
+      * mdbuild.bak/projects/PDB_complexR1_XXXX_10w_eqout_replica_1 -> mdbuild.bak/projects/PDB_complexR1_XXXX_50w_eqout_replica_1
 
 # File Structure
 
