@@ -86,3 +86,11 @@
 * mdbuild.bak/scripts/runme.py: script integrated amber_build_system.py,mdbuild_add_multi_ligands.sh for workflow control.
 * mdbuild.bak/scripts/mdp: mdp files of gromacs for minimization/equilibration/production.
 * mdbuild.bak/runme.sh: main script to start all processes.
+
+# Quick Start
+
+download scripts/pdbbind_amber_gromacs
+
+cd scripts/pdbbind_amber_gromacs/mdbuild.bak
+
+source runme.sh
