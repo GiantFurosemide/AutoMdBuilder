@@ -19,7 +19,7 @@ file_out_pdb = os.path.join(out_dir, os.path.basename(file_in_pdb).replace('.pdb
 
 # prcessing by pdbfixer
 
-def pdbfixer_processor(file_in_pdb,file_out_pdb,chain_id_keep_start=1,ph=7.0):
+def pdbfixer_processor(file_in_pdb,file_out_pdb,ph=7.0):
     """
     process pdb file by pdbfixer, ONLY KEEP 1ST CHAIN.
     add missing residues, atoms, hydrogens, remove heterogens, nonstandard residues
@@ -153,7 +153,7 @@ if __name__ == '__main__':
             print(f"{datetime.datetime.now()} Processing {file_out_pdb} done!")
             continue
         
-        pdbfixer_processor(pdb_file,file_out_pdb,chain_id_keep_start=1,ph=7.0)
+        pdbfixer_processor(pdb_file,file_out_pdb,ph=7.0)
         print(f"{datetime.datetime.now()} Processing {file_out_pdb} done!")
     
     for pdb_file in glob('v2020/PDBbind_v2020_other_PL/v2020-other-PL/????/*_protein.pdb'):
@@ -164,5 +164,5 @@ if __name__ == '__main__':
             print(f"{datetime.datetime.now()} Processing {file_out_pdb} done!")
             continue
         
-        pdbfixer_processor(pdb_file,file_out_pdb,chain_id_keep_start=1,ph=7.0)
+        pdbfixer_processor(pdb_file,file_out_pdb,ph=7.0)
         print(f"{datetime.datetime.now()} Processing {file_out_pdb} done!")
