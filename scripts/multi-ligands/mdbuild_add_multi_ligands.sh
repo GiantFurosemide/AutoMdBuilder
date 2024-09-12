@@ -141,7 +141,7 @@ echo "${LIGNAME}   ${LIG_NUMBER}" >> topol.top
 
 # make position restraint for ligand
 ndx=$($GMX make_ndx -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_lig_noh.ndx <<EOF
-"r ${LIGAND_LETTER_OUT} & !a H*
+"!a H* & r ${LIGAND_LETTER_OUT}
 name 3 LIG-H
 q"
 EOF
