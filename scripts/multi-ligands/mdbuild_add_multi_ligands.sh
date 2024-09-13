@@ -18,22 +18,22 @@ conda activate acpype
 #PDB FILE, will be replace in the code later by $PDB (default is "complex")
 FILE="myprotein" #<<<<<<<<<<<<<<<<<<<<<<<<< PUT THE PDB NAME HERE (without the extension)
 
-# ligand
-# LIGAND NAME, if you have a ligand, it will be parametrize with acpype and the ligand name will be replace by "LIG".
-LIGNAME="FTY" #<<<<<<<<<<<<<<<<<<<<<<  #PUT LIGAND NAME HERE, leave it blank if no ligand.
-LIGAND_LETTER='UNL' # 3-letter name in PDB files
-LIGAND_LETTER_OUT=$LIGAND_LETTER # 3-letter name in out pdb file form ligand extraction of original PDB file for topology buildin by acpype 
-								 # Should be same asLIGAND_LETTER in ligand_NEW.pdb
-LIG_NUMBER=1
+## ligand
+## LIGAND NAME, if you have a ligand, it will be parametrize with acpype and the ligand name will be replace by "LIG".
+#LIGNAME="FTY" #<<<<<<<<<<<<<<<<<<<<<<  #PUT LIGAND NAME HERE, leave it blank if no ligand.
+#LIGAND_LETTER='UNL' # 3-letter name in PDB files
+#LIGAND_LETTER_OUT=$LIGAND_LETTER # 3-letter name in out pdb file form ligand extraction of original PDB file for topology buildin by acpype 
+#								 # Should be same asLIGAND_LETTER in ligand_NEW.pdb
+#LIG_NUMBER=1
 
 #---------  SIMU SETUP  -----------
 BOXSIZE=10.0 #cubic simulation boxsiwe
 BOXTYPE=cubic #Box type
-NT=36 #Number of core.
+NT=24 #Number of core.
 WATER=tip3p #Water type
-NUMBEROFREPLICAS=3 #Number of replica
+NUMBEROFREPLICAS=5 #Number of replica
 FF=amber99sb-ildn #Force field
-SIMULATIONTIME='' #Simulation time in nanosec. Will be converted in fs and modified in the mdp file.
+SIMULATIONTIME='1' #Simulation time in nanosec. Will be converted in fs and modified in the mdp file.
 					#If you do not need production, keep SIMULATIONTIME empty.
 NACL_CONC=0.15
 #  edit temperature directly in mdp file for equilibrium and production
@@ -47,11 +47,17 @@ GPU1="-gpu_id 1 -ntmpi 1 -ntomp 20 -nb gpu -bonded gpu -pin on -pinstride 0 -nst
 MDRUN_CPU="$GMX mdrun -nt $NT"
 MDRUN_GPU="$GMX mdrun $GPU1"
 NR_MAX_WARN=20
+#--------- log file -----------
+LOG_MDBUILD="$PWD/mdbuilder.log"
+function my_log(){
+	echo -e "[$(date) ] : $1" >> $LOG_MDBUILD
+}
+echo -e "[$(date) ] : start" > $LOG_MDBUILD
 #-------- clean -----------
 rm -rfv param
 rm -rfv complex.pdb
 rm -rfv topol.top
-rm -rfv replica_1
+rm -rfv replica_*
 
 #-------- STSTEM BUILDING --------
 
@@ -115,19 +121,23 @@ mkdir receptor
 mv receptor.pdb receptor/
 cd receptor
 
-$GMX pdb2gmx -f receptor.pdb -o receptor_GMX.pdb -water $WATER -ignh -ff $FF
+$GMX pdb2gmx -f receptor.pdb -o receptor_GMX.pdb -water $WATER -ignh -ff $FF 
 cd ../../
 cp param/receptor/*.itp param/receptor/topol.top param/receptor/receptor_GMX.pdb .
 cp receptor_GMX.pdb complex.pdb
+
+my_log "receptor topology files generated"
+
 ###########################
 # mannual add topol ligand 
 ###########################
 
 
-
+###################### function start ############################
 function update_ligand_info(){
 	local ligand_info_bash=${1}
 	source $ligand_info_bash 
+	my_log "update ligand info for ${LIGNAME}"
 }
 
 function prepare_complex_pdb(){
@@ -136,17 +146,48 @@ cp topol.top topol.bak
 cat topol.top | sed "/forcefield\.itp\"/a\
   #include \"${LIGNAME}_GMX.itp\"" > topol2.top
 mv topol2.top topol.top
+my_log "${LIGNAME}_GMX.itp included in topol.top"
+
 # add ligand info to [ system ] block in topol.top
 echo "${LIGNAME}   ${LIG_NUMBER}" >> topol.top
+my_log "ligand info added to topol.top"
 
 # make position restraint for ligand
 ndx=$($GMX make_ndx -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_lig_noh.ndx <<EOF
-"!a H* & r ${LIGAND_LETTER_OUT}
+!a H* & r ${LIGAND_LETTER_OUT}
 name 3 LIG-H
-q"
+q
 EOF
-)	
+)
+my_log  "ndx=$($GMX make_ndx -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_lig_noh.ndx <<EOF
+!a H* & r ${LIGAND_LETTER_OUT}
+name 3 LIG-H
+q
+EOF
+)"
+# check if ndx file is generated
+if [ ! -f ${LIGNAME}_lig_noh.ndx ]; then
+	echo "ndx file is not generated"
+	my_log "ERROR! ndx file is not generated"
+	exit 0
+fi
+# check if string LIG-H is in ndx file, by grep
+if ! grep -q "LIG-H" ${LIGNAME}_lig_noh.ndx; then
+	echo "LIG-H is not in ndx file"
+	my_log "ERROR! LIG-H is not in ndx file"
+	exit 0
+fi
+
+
+# generate posre file for ligand
 echo "LIG-H" | $GMX genrestr -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_posre_ligand.itp -n ${LIGNAME}_lig_noh.ndx -fc 1000 1000 1000
+# check if posre file is generated
+if [ ! -f ${LIGNAME}_posre_ligand.itp ]; then
+	echo "posre file is not generated"
+	my_log "ERROR! posre file is not generated"
+	exit 0
+fi
+
 
 # add position restraint to ligand.itp
 echo "
@@ -155,7 +196,7 @@ echo "
 #ifdef POSRES
 #include \"${LIGNAME}_posre_ligand.itp\"
 #endif"  >> ${LIGNAME}_GMX.itp
-
+my_log "position restraint (${LIGNAME}_posre_ligand.itp) added to ${LIGNAME}_GMX.itp"
 # extract coordination of ligands from original pdb file, then merge receptor and ligand to complex.pdb 
 # for "swimming" system, ligands coodination is from acpype (ligand_NEW.pdb)
 # therefore compatible with ligand_GMX.itp
@@ -166,7 +207,15 @@ grep -h ATOM complex.pdb all-ligand.pdb > complex2.pdb
 rm -rfv complex.pdb 
 mv complex2.pdb complex.pdb 
 
+# check if ligand is in complex.pdb
+if ! grep -q "$LIGAND_LETTER" complex.pdb; then
+	echo "ligand is not in complex.pdb"
+	my_log "ERROR! ligand is not in complex.pdb"
+	exit 0
+fi
+my_log "complex.pdb generated"
 }
+###################### function end ############################
 
 # define a list of lignad info, LIGAND_INFO_LIST
 source ligand_config.sh
@@ -178,21 +227,69 @@ done;
 
 # extract [ atomtypes ] block from *_GMX.itp and merge to atomtypes_merge.itp 
 python ligand_itp_process.py # update *_GMX.itp; generate atomtypes_merge.itp 
+my_log "atomtypes_merge.itp generated"
+
+#cat topol.top | sed "/forcefield\.itp\"/a\
+#  #include \"DASV_GMX_nonbond.itp\"" > topol2.top
+#mv topol2.top topol.top
+
 cat topol.top | sed "/forcefield\.itp\"/a\
   #include \"atomtypes_merge.itp\"" > topol2.top
 mv topol2.top topol.top
+# check if atomtypes_merge.itp is included in topol.top
+if ! grep -q "atomtypes_merge.itp" topol.top; then
+	echo "atomtypes_merge.itp is not included in topol.top"
+	my_log "ERROR! atomtypes_merge.itp is not included in topol.top"
+	exit 0
+fi
+my_log "atomtypes_merge.itp included in topol.top"
+
+
+
 ######################
 ## set box size; add water
 ###################### 
 $GMX editconf -f  complex.pdb -o complex_newbox.gro -box $BOXSIZE -bt $BOXTYPE
+# check if complex_newbox.gro is generated
+if [ ! -f complex_newbox.gro ]; then
+	echo "complex_newbox.gro is not generated"
+	my_log "ERROR! complex_newbox.gro is not generated"
+	exit 0
+fi
+my_log "complex_newbox.gro generated"
+
+
 PDB=complex
 $GMX solvate -cp $PDB"_newbox.gro" -cs spc216.gro -o "${PDB}_solv.gro" -p topol.top
+#check if ${PDB}_solv.gro is generated
+if [ ! -f "${PDB}_solv.gro" ]; then
+	echo "${PDB}_solv.gro is not generated"
+	my_log "ERROR! ${PDB}_solv.gro is not generated"
+	exit 0
+fi
+my_log "${PDB}_solv.gro generated" 
+
 
 #######################
 ## ADDING IONS
 #######################
 $GMX grompp -f mdp/ions.mdp -c $PDB"_solv.gro" -p topol.top -o ions.tpr -maxwarn $NR_MAX_WARN
+#check if ions.tpr is generated
+if [ ! -f ions.tpr ]; then
+	echo "ions.tpr is not generated"
+	my_log "ERROR! ions.tpr is not generated"
+	exit 0
+fi
+my_log "ions.tpr generated"
+
 echo "SOL" | $GMX genion -s ions.tpr -o $PDB"_solv_ions.gro" -p topol.top -pname NA -nname CL  -conc $NACL_CONC -neutral 
+#check if ${PDB}_solv_ions.gro is generated
+if [ ! -f "${PDB}_solv_ions.gro" ]; then
+	echo "${PDB}_solv_ions.gro is not generated"
+	my_log "ERROR! ${PDB}_solv_ions.gro is not generated"
+	exit 0
+fi
+my_log "${PDB}_solv_ions.gro generated"
 
 
 #-------- MINIMIZATION / EQUILIBRUIM / PRODUCTION / ANALYSIS -------
@@ -208,12 +305,19 @@ for ((i=0; i<$NUMBEROFREPLICAS; i++))
 	cp ../$PDB"_solv_ions.gro" .
 	cp ../topol.top .
 	cp ../*.itp .
-
+	my_log "replica_"$((i+1))" directory created"
 
 	#######################
 	## MINIMISATION
 	#######################
 	$GMX grompp -f mdp/em.mdp -c $PDB"_solv_ions.gro" -p topol.top -o em.tpr -maxwarn $NR_MAX_WARN
+	#check if em.tpr is generated
+	if [ ! -f em.tpr ]; then
+		echo "em.tpr is not generated"
+		my_log "ERROR! em.tpr is not generated"
+		continue
+	fi
+	my_log "em.tpr generated"
 	$MPI $MDRUN_CPU -v -deffnm em 
 
 
@@ -233,6 +337,13 @@ INPUT
 	## temperature (300K by default)
 	#######################
 	$GMX grompp -f mdp/nvt_300.mdp -c results/mini/em.gro -r results/mini/em.gro  -p topol.top -o nvt_300.tpr -maxwarn $NR_MAX_WARN
+	#check if nvt_300.tpr is generated
+	if [ ! -f nvt_300.tpr ]; then
+		echo "nvt_300.tpr is not generated"
+		my_log "ERROR! nvt_300.tpr is not generated"
+		continue
+	fi
+	my_log "nvt_300.tpr generated"
 	$MPI $MDRUN_GPU -deffnm nvt_300 -v 
 	#temperature_graph
 
@@ -250,6 +361,13 @@ INPUT
 	## Pression
 	#######################
 	$GMX grompp -f mdp/npt.mdp -c results/nvt/nvt_300.gro -r results/nvt/nvt_300.gro -t results/nvt/nvt_300.cpt -p topol.top -o npt_ab.tpr -maxwarn $NR_MAX_WARN
+	#check if npt_ab.tpr is generated
+	if [ ! -f npt_ab.tpr ]; then
+		echo "npt_ab.tpr is not generated"
+		my_log "ERROR! npt_ab.tpr is not generated"
+		continue
+	fi
+	my_log "npt_ab.tpr generated"
 	$MPI $MDRUN_GPU -deffnm npt_ab -v 
 
 	#cleaning
@@ -302,6 +420,13 @@ EOF
 )          
 
 	$GMX grompp -f mdp/md_prod.mdp -c results/npt/npt_ab.gro -t results/npt/npt_ab.cpt -p topol.top -o "md_"$PDB"_prod.tpr" -maxwarn $NR_MAX_WARN
+	#check if md_prod.tpr is generated
+	if [ ! -f "md_"$PDB"_prod.tpr" ]; then
+		echo "md_prod.tpr is not generated"
+		my_log "ERROR! md_prod.tpr is not generated"
+		continue
+	fi
+	my_log "md_prod.tpr generated"
 	$MPI $MDRUN_GPU -deffnm "md_"$PDB"_prod"  -v
 
 	mkdir -p results/prod
@@ -376,5 +501,5 @@ done
 
 # packing up results
 source packup.sh
-
+my_log "results packed up"
 conda deactivate
