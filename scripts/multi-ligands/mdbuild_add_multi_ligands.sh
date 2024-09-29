@@ -169,13 +169,13 @@ EOF
 if [ ! -f ${LIGNAME}_lig_noh.ndx ]; then
 	echo "ndx file is not generated"
 	my_log "ERROR! ndx file is not generated"
-	exit 0
+	 
 fi
 # check if string LIG-H is in ndx file, by grep
 if ! grep -q "LIG-H" ${LIGNAME}_lig_noh.ndx; then
 	echo "LIG-H is not in ndx file"
 	my_log "ERROR! LIG-H is not in ndx file"
-	exit 0
+	 
 fi
 
 
@@ -185,7 +185,7 @@ echo "LIG-H" | $GMX genrestr -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_posre_ligand.it
 if [ ! -f ${LIGNAME}_posre_ligand.itp ]; then
 	echo "posre file is not generated"
 	my_log "ERROR! posre file is not generated"
-	exit 0
+	 
 fi
 
 
@@ -211,7 +211,7 @@ mv complex2.pdb complex.pdb
 if ! grep -q "$LIGAND_LETTER" complex.pdb; then
 	echo "ligand is not in complex.pdb"
 	my_log "ERROR! ligand is not in complex.pdb"
-	exit 0
+	 
 fi
 my_log "complex.pdb generated"
 }
@@ -240,7 +240,7 @@ mv topol2.top topol.top
 if ! grep -q "atomtypes_merge.itp" topol.top; then
 	echo "atomtypes_merge.itp is not included in topol.top"
 	my_log "ERROR! atomtypes_merge.itp is not included in topol.top"
-	exit 0
+	 
 fi
 my_log "atomtypes_merge.itp included in topol.top"
 
@@ -254,7 +254,7 @@ $GMX editconf -f  complex.pdb -o complex_newbox.gro -box $BOXSIZE -bt $BOXTYPE
 if [ ! -f complex_newbox.gro ]; then
 	echo "complex_newbox.gro is not generated"
 	my_log "ERROR! complex_newbox.gro is not generated"
-	exit 0
+	 
 fi
 my_log "complex_newbox.gro generated"
 
@@ -265,7 +265,7 @@ $GMX solvate -cp $PDB"_newbox.gro" -cs spc216.gro -o "${PDB}_solv.gro" -p topol.
 if [ ! -f "${PDB}_solv.gro" ]; then
 	echo "${PDB}_solv.gro is not generated"
 	my_log "ERROR! ${PDB}_solv.gro is not generated"
-	exit 0
+	 
 fi
 my_log "${PDB}_solv.gro generated" 
 
@@ -278,7 +278,7 @@ $GMX grompp -f mdp/ions.mdp -c $PDB"_solv.gro" -p topol.top -o ions.tpr -maxwarn
 if [ ! -f ions.tpr ]; then
 	echo "ions.tpr is not generated"
 	my_log "ERROR! ions.tpr is not generated"
-	exit 0
+	 
 fi
 my_log "ions.tpr generated"
 
@@ -287,7 +287,7 @@ echo "SOL" | $GMX genion -s ions.tpr -o $PDB"_solv_ions.gro" -p topol.top -pname
 if [ ! -f "${PDB}_solv_ions.gro" ]; then
 	echo "${PDB}_solv_ions.gro is not generated"
 	my_log "ERROR! ${PDB}_solv_ions.gro is not generated"
-	exit 0
+	 
 fi
 my_log "${PDB}_solv_ions.gro generated"
 
