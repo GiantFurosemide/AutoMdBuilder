@@ -32,3 +32,12 @@ output_3letter_code="GAC"
 acedrg -s $file_in_sdf -o $output_name -r $output_3letter_code
 obabel -ipdb ${output_name}.pdb -omol2  > ${output_name}.mol2
 acpype -i ${output_name}.mol2
+
+######### use this script to generate 3D coordinates for a ligand 20240929
+input_3leter_code='ICP'
+file_in_smile="${input_3leter_code}.smile"
+output_name=${input_3leter_code}
+output_3letter_code=${input_3leter_code}
+acedrg -i $file_in_smile -o $output_name -r $output_3letter_code
+obabel -ipdb ${output_name}.pdb -omol2  > ${output_name}.mol2
+acpype -i ${output_name}.mol2
