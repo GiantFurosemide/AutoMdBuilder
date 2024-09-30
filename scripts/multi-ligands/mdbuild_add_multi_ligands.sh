@@ -31,9 +31,9 @@ BOXSIZE=10.0 #cubic simulation boxsiwe
 BOXTYPE=cubic #Box type
 NT=24 #Number of core.
 WATER=tip3p #Water type
-NUMBEROFREPLICAS=5 #Number of replica
+NUMBEROFREPLICAS=7 #Number of replica
 FF=amber99sb-ildn #Force field
-SIMULATIONTIME='1' #Simulation time in nanosec. Will be converted in fs and modified in the mdp file.
+SIMULATIONTIME='0.1' #Simulation time in nanosec. Will be converted in fs and modified in the mdp file.
 					#If you do not need production, keep SIMULATIONTIME empty.
 NACL_CONC=0.15
 #  edit temperature directly in mdp file for equilibrium and production
@@ -169,12 +169,24 @@ EOF
 if [ ! -f ${LIGNAME}_lig_noh.ndx ]; then
 	echo "ndx file is not generated"
 	my_log "ERROR! ndx file is not generated"
+	ndx=$($GMX make_ndx -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_lig_noh.ndx <<EOF
+!a H* & r ${LIGAND_LETTER_OUT}
+name 3 LIG-H
+q
+EOF
+)
 	 
 fi
 # check if string LIG-H is in ndx file, by grep
 if ! grep -q "LIG-H" ${LIGNAME}_lig_noh.ndx; then
 	echo "LIG-H is not in ndx file"
 	my_log "ERROR! LIG-H is not in ndx file"
+	ndx=$($GMX make_ndx -f ${LIGNAME}_NEW.pdb -o ${LIGNAME}_lig_noh.ndx <<EOF
+r ${LIGAND_LETTER_OUT} & !a H* 
+name 3 LIG-H
+q
+EOF
+)
 	 
 fi
 
