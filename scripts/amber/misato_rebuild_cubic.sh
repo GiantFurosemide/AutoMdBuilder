@@ -33,9 +33,14 @@ loadamberparams ligand.frcmod
 complex = combine {protein ligand}
 
 # Add a cubic water box with a minimum distance of 12 Å
-solvatebox complex TIP3PBOX 12.0
+#solvatebox complex TIP3PBOX 12.0
 
-# Neutralize the system with Na+ and Cl- ions
+# Create a cubic water box with fixed size of 100 Å
+solvatebox complex TIP3PBOX {100.0 100.0 100.0}
+
+
+# Add 150mM NaCl and neutralize the system
+# addions2 complex Na+ Cl- 150 
 addions complex Na+ 0
 addions complex Cl- 0
 
