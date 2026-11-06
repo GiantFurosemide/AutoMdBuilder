@@ -1,0 +1,3 @@
+#!/bin/sh
+test "$AUTOMDBUILDER_TEST_SCHEDULER" = 1 || exit 2
+exit 0

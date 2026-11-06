@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "structure": "complex.pdb",
+  "ligands": [
+    {"id": "LIG", "resname": "LIG", "count": 2, "mode": "itp", "itp": "LIG.itp"}
+  ]
+}

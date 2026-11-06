@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "structure": "complex.pdb",
+  "ligands": [
+    {"id": "LIG", "resname": "LIG", "count": 1, "mode": "acpype", "mol2": "LIG.mol2", "charge": 0, "atom_type": "gaff2", "charge_method": "bcc"}
+  ]
+}

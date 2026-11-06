@@ -1,0 +1,4 @@
+#!/bin/sh
+test "$AUTOMDBUILDER_TEST_SCHEDULER" = 1 || exit 2
+# All synchronous test submissions have already finished.
+exit 0

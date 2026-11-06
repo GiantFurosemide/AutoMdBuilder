@@ -1,0 +1,37 @@
+name: Nextflow contracts (no MD)
+on:
+  push:
+    branches: ['nextflow.v.0.1']
+  pull_request:
+  workflow_dispatch:
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install pinned Nextflow launcher
+        run: |
+          mkdir -p "$RUNNER_TEMP/nxf-bin"
+          curl -fL --retry 3 https://github.com/nextflow-io/nextflow/releases/download/v24.10.4/nextflow -o "$RUNNER_TEMP/nxf-bin/nextflow"
+          echo "f69085f647f6c0a98c48ba5e905b10a55e04d32cfadfab2db18ae98601416c26  $RUNNER_TEMP/nxf-bin/nextflow" | sha256sum -c -
+          chmod +x "$RUNNER_TEMP/nxf-bin/nextflow"
+          echo "$RUNNER_TEMP/nxf-bin" >> "$GITHUB_PATH"
+      - name: Unit and workflow tests
+        env:
+          NXF_VER: '24.10.4'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 tests/run_workflow_tests.py --outdir tests/output/ci
+          python3 tests/test_slurm_submission.py --outdir tests/output/slurm-ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: workflow-contract-logs
+          path: |
+            tests/output/ci/*.log
+            tests/output/ci/**/pipeline_info/*

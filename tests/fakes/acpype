@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+"""ACPYPE dispatch contract fake; NOT parameterization."""
+import os
+from pathlib import Path
+import shutil
+import sys
+if os.environ.get('AUTOMDBUILDER_TEST_FAKE') != '1':
+    sys.exit('Only for explicit contract tests')
+argv = sys.argv[1:]
+if argv == ['-v']:
+    print('ACPYPE v. 2023.10.27 FAKE')
+    sys.exit(0)
+name = argv[argv.index('-b') + 1]
+out = Path(name + '.acpype')
+out.mkdir()
+shutil.copyfile(Path(__file__).resolve().parents[1] / 'fixtures/cases/ligand/LIG.itp', out / (name + '_GMX.itp'))
+print('FAKE ACPYPE completed (not a chemical calculation)')

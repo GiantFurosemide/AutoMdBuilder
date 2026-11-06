@@ -1,0 +1,13 @@
+{
+  "nextflow": "24.10.4",
+  "java_major": 21,
+  "gromacs": "2024.4",
+  "gromacs_source": "https://ftp.gromacs.org/gromacs/gromacs-2024.4.tar.gz",
+  "gromacs_sha256": "ac618ece2e58afa86b536c5a2c4fcb937f0760318f12d18f10346b6bdebd86a8",
+  "cuda_base": "nvidia/cuda@sha256:5645fec64549cc35930eee9d85aafd2b0006c0c3f22632be5a1d85e2604e9749",
+  "cuda_tag_description": "12.4.1-devel-ubuntu22.04, linux/amd64",
+  "acpype": "2023.10.27",
+  "acpype_image": "acpype/acpype@sha256:83e77ddd3def09beb1a4226aa5d95f1934afe440d448b0156e9c28ad59afdca0",
+  "platform": "linux/amd64",
+  "gpu_architecture": "SM60,61,70,75,80,86,89,90 including A40 (86); compute_86 PTX"
+}

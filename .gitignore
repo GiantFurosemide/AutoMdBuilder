@@ -1,0 +1,11 @@
+# Nextflow runtime / generated systems
+.nextflow*
+work/
+results/
+.tools/
+.runtime/
+*.sif
+__pycache__/
+*.py[cod]
+.DS_Store
+tests/output/

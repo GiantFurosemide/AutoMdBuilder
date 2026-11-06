@@ -1,0 +1,11 @@
+; Deliberately tiny synthetic contract fixture, NOT a validated force field.
+[ atomtypes ]
+c3 c3 12.01 0 A 0.34 0.45
+hc hc 1.008 0 A 0.26 0.12
+[ moleculetype ]
+LIG 3
+[ atoms ]
+1 c3 1 LIG C1 1 0 12.01
+2 hc 1 LIG H1 2 0 1.008
+[ bonds ]
+1 2 1 0.109 100000

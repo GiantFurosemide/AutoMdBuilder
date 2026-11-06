@@ -1,0 +1,24 @@
+# Build on Linux amd64. GPU is NOT needed for compilation.
+FROM nvidia/cuda@sha256:5645fec64549cc35930eee9d85aafd2b0006c0c3f22632be5a1d85e2604e9749
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake curl ca-certificates libfftw3-dev python3 \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://ftp.gromacs.org/gromacs/gromacs-2024.4.tar.gz -o /tmp/gromacs.tar.gz \
+    && echo 'ac618ece2e58afa86b536c5a2c4fcb937f0760318f12d18f10346b6bdebd86a8  /tmp/gromacs.tar.gz' | sha256sum -c - \
+    && tar -xzf /tmp/gromacs.tar.gz -C /tmp \
+    && cmake -S /tmp/gromacs-2024.4 -B /tmp/gromacs-build \
+       -DCMAKE_INSTALL_PREFIX=/opt/gromacs -DGMX_GPU=CUDA -DGMX_MPI=OFF \
+       -DGMX_THREAD_MPI=ON -DGMX_SIMD=SSE2 -DGMX_FFT_LIBRARY=fftw3 \
+       "-DGMX_CUDA_TARGET_SM=60;61;70;75;80;86;89;90" -DGMX_CUDA_TARGET_COMPUTE=86 \
+       -DGMX_BUILD_UNITTESTS=OFF -DREGRESSIONTEST_DOWNLOAD=OFF \
+    && cmake --build /tmp/gromacs-build -j 4 \
+    && cmake --install /tmp/gromacs-build \
+    && rm -rf /tmp/gromacs-build /tmp/gromacs-2024.4 /tmp/gromacs.tar.gz \
+    && mkdir -p /opt/automdbuilder \
+    && dpkg-query -W > /opt/automdbuilder/os-packages.txt
+ENV PATH=/opt/gromacs/bin:$PATH
+ENV OMP_NUM_THREADS=1
+RUN gmx --version && python3 --version
+ENTRYPOINT []
+CMD ["/bin/bash"]

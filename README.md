@@ -2,6 +2,21 @@
 
 Homemade scripts based on  [protocolGromacs](https://github.com/tubiana/protocolGromacs), for automatic md system building.
 
+## Nextflow v0.1: distributed system generation
+
+The new `main.nf` pipeline builds and equilibrates aqueous protein/ligand systems
+with **GROMACS 2024**, including optional ACPYPE parameterization. It distributes
+cases and replicas over Slurm (`gpu`, A40), supports serial local NVIDIA-GPU
+execution, and stops after NPT with a documented downstream system interface.
+
+- [中文流程、模块输入输出、运行及恢复说明](docs/nextflow/README.zh-CN.md)
+- [Container environments and cluster migration](environments/README.md)
+- [Scientific defaults and their differences from the legacy scripts](docs/nextflow/README.zh-CN.md#4-参数与协议)
+
+Start with `python3 bin/launch.py --help`. The legacy instructions below apply to
+the original scripts, not the Nextflow pipeline. No production MD is implemented
+in the Nextflow version.
+
 ## 1. Installation
 Please visit the following links for more information about installation.
 

@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+"""Execute a submitted stub synchronously, recording the real Nextflow job script."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+if os.environ.get('AUTOMDBUILDER_TEST_SCHEDULER') != '1':
+    sys.exit('Fake Slurm is available only in explicit scheduler contract tests')
+job = str(time.time_ns() % 1000000000)
+script = Path(sys.argv[-1]).resolve()
+Path('.fake-slurm-submit.json').write_text(json.dumps({'job': job, 'script': str(script), 'argv': sys.argv}))
+with Path('.fake-slurm.log').open('w') as log:
+    subprocess.run(['bash', str(script)], env=dict(os.environ, SLURM_JOB_ID=job), stdout=log, stderr=subprocess.STDOUT)
+print('Submitted batch job ' + job)

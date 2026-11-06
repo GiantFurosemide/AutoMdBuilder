@@ -1,0 +1,14 @@
+; Zero-step compilation check only. No production simulation is performed.
+integrator = md
+dt = @dt_ps@
+nsteps = 0
+continuation = yes
+gen-vel = no
+constraints = h-bonds
+constraint-algorithm = lincs
+cutoff-scheme = Verlet
+coulombtype = PME
+rcoulomb = 1.0
+rvdw = 1.0
+DispCorr = EnerPres
+pbc = xyz

@@ -1,0 +1,4 @@
+case_id,case_dir,replicas
+protein,cases/protein,2
+ligand,cases/ligand,2
+acpype,cases/acpype,1

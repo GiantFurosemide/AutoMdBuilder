@@ -1,0 +1,19 @@
+; Numerical preparation. Stop unless GROMACS reports Fmax below emtol.
+integrator = steep
+nsteps = @em_steps@
+emtol = @em_tolerance@
+emstep = 0.01
+define = -DFLEXIBLE
+constraints = none
+cutoff-scheme = Verlet
+nstlist = 20
+coulombtype = PME
+rcoulomb = 1.0
+rvdw = 1.0
+DispCorr = EnerPres
+pbc = xyz
+nstenergy = 100
+nstlog = 100
+nstxout = 0
+nstvout = 0
+nstfout = 0

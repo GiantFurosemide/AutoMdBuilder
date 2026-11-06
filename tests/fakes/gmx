@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+"""COMMAND CONTRACT FAKE. Does not perform molecular simulation."""
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import sys
+
+if os.environ.get('AUTOMDBUILDER_TEST_FAKE') != '1':
+    sys.exit('This is a test executable. Set AUTOMDBUILDER_TEST_FAKE=1 ONLY in tests.')
+argv = sys.argv[1:]
+def option(key, default=None):
+    return argv[argv.index(key)+1] if key in argv else default
+def put(path, text='FAKE SOFTWARE TEST OUTPUT\n'):
+    Path(path).write_text(text)
+def gro(path):
+    put(path, 'FAKE\n1\n    1ALA     CA    1   0.000   0.000   0.000\n3.0 3.0 3.0\n')
+if argv == ['--version']:
+    print('GROMACS version: 2024.4-FAKE')
+    sys.exit(0)
+cmd = argv[0]
+if cmd == 'pdb2gmx' and os.environ.get('AUTOMDBUILDER_FAIL_ONCE'):
+    marker = Path(os.environ['AUTOMDBUILDER_FAIL_ONCE'])
+    if not marker.exists():
+        marker.touch()
+        sys.exit(137)
+if os.environ.get('AUTOMDBUILDER_FAIL_STAGE') == cmd:
+    sys.exit(1)
+if cmd == 'pdb2gmx':
+    shutil.copyfile(option('-f'), option('-o'))
+    put(option('-p'), '#include "amber99sb-ildn.ff/forcefield.itp"\n#include "protein.itp"\n[ system ]\nTest\n[ molecules ]\nProtein 1\n')
+    put('protein.itp', '[ moleculetype ]\nProtein 3\n[ atoms ]\n1 CA 1 ALA CA 1 0 12\n')
+    put('posre.itp', '[ position_restraints ]\n1 1 1000 1000 1000\n')
+elif cmd in ('editconf', 'solvate', 'genion'):
+    gro(option('-o'))
+elif cmd == 'grompp':
+    put(option('-o'))
+    if option('-po'):
+        shutil.copyfile(option('-f'), option('-po'))
+    if option('-pp'):
+        put(option('-pp'), '[ defaults ]\n1 2 yes 0.5 0.8333\n[ system ]\nFAKE\n[ molecules ]\nProtein 1\n')
+elif cmd == 'mdrun':
+    stage = option('-deffnm')
+    gro(stage + '.gro')
+    put(stage + '.cpt')
+    put(stage + '.edr')
+    mdp = Path(stage + '.mdp').read_text()
+    nsteps = int(re.search(r'^nsteps\s*=\s*(\d+)', mdp, re.M).group(1))
+    put(stage + '.log', 'Steepest Descents converged to Fmax < 1000 in 10 steps\n' if stage == 'em'
+        else f'Step Time\n{nsteps} 500\nFinished mdrun\n')
+elif cmd == 'energy':
+    put(option('-o'), '@ title "FAKE"\n0 303.15\n500 303.15\n')
+else:
+    sys.exit('Unexpected GROMACS command: ' + cmd)
